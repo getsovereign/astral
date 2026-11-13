@@ -1,36 +1,3 @@
-local Website = "https://gist.githubusercontent.com/getsovereign/26adce898bba431b840f4990e797d7d3/raw"
-local Check = 5
-
-local httpGet
-if request then httpGet = function(url) return request({Url = url, Method = "GET"}).Body end
-elseif httpget then httpGet = function(url) return httpget(url) end
-elseif syn and syn.request then httpGet = function(url) return syn.request({Url = url, Method = "GET"}).Body end
-elseif http and http.request then httpGet = function(url) return http.request({Url = url, Method = "GET"}).Body end
-else error("No supported HTTP function found.") end
-
-local function checkGist()
-    local ok, body = pcall(httpGet, Website .. "?t=" .. tick())
-    if not ok or not body then return nil end
-    return body:lower()
-end
-
-local function kick()
-    pcall(function() game.Players.LocalPlayer:Kick("You are on the list.") end)
-    pcall(function() game:Shutdown() end)
-end
-
-task.spawn(function()
-    while true do
-        local body = checkGist()
-        if body and body:match("yes") then
-            kick()
-            return
-        end
-        task.wait(Check)
-    end
-end)
-
--- Main script
 local Repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
 local Library = loadstring(game:HttpGet(Repo .. "Library.lua"))()
 local ThemeManager = loadstring(game:HttpGet(Repo .. "addons/ThemeManager.lua"))()
